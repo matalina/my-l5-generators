@@ -12,7 +12,7 @@ class CreateNewModel extends Command
      *
      * @var string
      */
-    protected $signature = 'make:rim';
+    protected $signature = 'make:rim {name}';
 
     /**
      * The console command description.
@@ -45,21 +45,24 @@ class CreateNewModel extends Command
         $model = array_pop($parts);
         $namespace = implode('\\', $parts);
 
+        if(!empty($namespace)) {
+            $namespace  .= '\\';
+        }
 
         // create Model file
         $this->call('make:model',[
-            'name' => 'Models\\'.$namespace.'\\'.$model
+            'name' => 'Models\\'.$namespace.$model
         ]);
 
         // create Interface file
         $this->call('make:interface', [
-            'name' => $namespace.'\\'.$model.'Interface'
+            'name' => $namespace.$model.'Interface'
         ]);
 
         // create Repository file
-        $this->call('make:interface', [
-            'name' => $namespace.'\\'.$model.'Repository',
-            'interface' => $namespace.'\\'.$model.'Interface'
+        $this->call('make:repository', [
+            'name' => $namespace.$model.'Repository',
+            'interface' => $namespace.$model.'Interface'
         ]);
     }
 
@@ -71,7 +74,8 @@ class CreateNewModel extends Command
     protected function getArguments()
     {
         return [
-            ['name', InputArgument::REQUIRED, 'The name of the model.'],
+            ['name', InputArgument::REQUIRED, 'The name of the class.'],
+            // ['interface', InputArgument::REQUIRED, 'The name of the repository interface.'],
         ];
     }
 }
